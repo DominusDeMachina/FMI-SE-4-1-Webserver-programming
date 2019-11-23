@@ -1,0 +1,25 @@
+{
+  "name": "FMI-SE-4-1-Webserver-programming",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/DominusDeMachina/FMI-SE-4-1-Webserver-programming.git",
+  "author": "Gennadiy Furduy <gennadiyfurduy@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.3.4",
+    "mongoose": "^5.7.12",
+    "multer": "^1.4.2",
+    "validator": "^12.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.7.0",
+    "nodemon": "^2.0.1"
+  }
+}
