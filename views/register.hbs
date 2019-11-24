@@ -1,0 +1,111 @@
+{{>header}}
+<div class="container">
+  <form class="input-form">
+    <div class="row">
+      <div class="form-group col">
+        <label for="userName">Потребителско име</label>
+        <input type="text" id="userName" class="form-control">
+      </div>
+      <div class="form-group col">
+        <label for="facNumber">Факультетен номер</label>
+        <input type="text" id="facNumber" class="form-control">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col">
+        <label for="firstName">Име</label>
+        <input type="text" id="firstName" class="form-control">
+      </div>
+      <div class="form-group col">
+        <label for="middleName">Презиме</label>
+        <input type="text" id="middleName" class="form-control">
+      </div>
+      <div class="form-group col">
+        <label for="lastName">Фамилия</label>
+        <input type="text" id="lastName" class="form-control">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col">
+        <label for="password">Парола</label>
+        <input type="text" id="password" class="form-control">
+      </div>
+      <div class="form-group col">
+        <label for="passwordAgain">Парола отново</label>
+        <input type="text" id="passwordAgain" class="form-control">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col">
+        <label for="spec">Специалност</label>
+        <input type="text" id="spec" class="form-control">
+      </div>
+      <div class="form-group col">
+        <label for="course">Курс</label>
+        <select class="custom-select" id="course"></select>
+      </div>
+      <div class="form-group col">
+        <label for="study">Форма на обучение</label>
+        <select id="study" class="custom-select"></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col"><a id="back" href="/" class="btn btn-secondary">Назад</a></div>
+      <div class="col"><button id="register" class="btn btn-success">Регистрация</button></div>
+    </div>
+  </form>
+</div>
+{{>footer}}
+
+<script>
+  window.addEventListener('load', async function () {
+    let coursesResponse = await fetch("/api/course", {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const courses = await coursesResponse.json();
+    const courseElement = document.querySelector("#course");
+    courseElement.innerHTML = courses.map(c => `<option value=${c._id}>${c.name}</option>`)
+    const studyResponse = await fetch("/api/study", {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const study = await studyResponse.json();
+    const studyElement = document.querySelector("#study");
+    studyElement.innerHTML = study.map(s => `<option value=${s._id}>${s.name}</option>`)
+
+  });
+  document.querySelector("#register").addEventListener("click", async function () {
+    const url = "/api/users/register";
+    const courseElement = document.querySelector("#course");
+    const studyElement = document.querySelector("#study");
+
+    const body = {
+      userName: document.querySelector("#userName").value,
+      facNumber: document.querySelector("#facNumber").value,
+      firstName: document.querySelector("#firstName").value,
+      middleName: document.querySelector("#middleName").value,
+      lastName: document.querySelector("#lastName").value,
+      password: document.querySelector("#password").value,
+      spec: document.querySelector("#spec").value,
+      study: studyElement.options[studyElement.selectedIndex].value,
+      course: courseElement.options[courseElement.selectedIndex].value
+    }
+    let response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (response.status !== 200) {
+      alert(response.statusText);
+    }
+    console.log(response);
+  });
+
+</script>

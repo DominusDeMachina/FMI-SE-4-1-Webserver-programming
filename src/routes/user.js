@@ -9,7 +9,7 @@ router.post("/api/users/register", async (req, res) => {
   try {
     await user.save();
     const token = await user.generateAuthToken();
-    res.status(201).send({ user, token });
+    res.status(201).cookie("token", token).send({ user, token });
   } catch (e) {
     res.status(400).send(e);
   }
@@ -22,15 +22,15 @@ router.post("/api/users/login", async (req, res) => {
       req.body.password
     );
     const token = await user.generateAuthToken();
-    res.send({ user, token });
+    res.cookie("token", token).send({ user, token });
   } catch (e) {
-    res.status(400).send();
+    res.status(403).send();
   }
 });
 
 router.post("/api/users/logout", auth, async (req, res) => {
   try {
-    req.user.tokens = [];
+    req.user.token = undefined;
     await req.user.save();
     res.send();
   } catch (e) {

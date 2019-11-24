@@ -1,4 +1,7 @@
 const express = require("express");
+const path = require("path");
+const hbs = require("hbs");
+const cookieParser = require("cookie-parser");
 require("./db/dbhelper");
 require("./db/dbpopulate");
 const userRouter = require("./routes/user");
@@ -10,7 +13,16 @@ const webRouter = require("./routes/web");
 const app = express();
 const port = process.env.port || 3000;
 
+const partialPath = path.join(__dirname, "../views/partials");
+const publicPath = path.join(__dirname, "../public");
+
+app.set("view engine", "hbs");
+hbs.registerPartials(partialPath);
+
+app.use(express.static(publicPath));
+
 app.use(express.json());
+app.use(cookieParser());
 app.use(webRouter);
 app.use(userRouter);
 app.use(workRouter);

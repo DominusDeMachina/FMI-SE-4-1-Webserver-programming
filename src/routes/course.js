@@ -1,6 +1,5 @@
 const express = require("express");
 const Course = require("../models/course");
-const auth = require("../middleware/auth");
 const router = new express.Router();
 
 router.get("/api/course", async (req, res) => {
