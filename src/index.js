@@ -29,6 +29,10 @@ app.use(workRouter);
 app.use(studyRouter);
 app.use(courseRouter);
 
+app.use(function(req, res, next) {
+  res.redirect("/")
+});
+
 app.listen(port, () => {
   console.log("Server start on port ", port);
 });

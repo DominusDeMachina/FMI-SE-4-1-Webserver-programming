@@ -18,8 +18,7 @@
 {{>footer}}
 
 <script>
-  const sendLogin = document.querySelector("#login");
-  sendLogin.addEventListener('click', async function (event) {
+  document.querySelector("#login").addEventListener('click', async function (event) {
     event.preventDefault()
     const userName = document.querySelector("#userName").value;
     const password = document.querySelector("#password").value;
@@ -33,10 +32,11 @@
         'Content-Type': 'application/json'
       }
     });
-    if (response.status !== 200) {
+    if (!response.ok) {
       alert(response.statusText);
+      return;
     }
-    console.log(response);
+    window.location.replace("/works");
 
   })
 
