@@ -27,7 +27,7 @@ router.get("/works", auth, async (req, res) => {
 
 router.get("/works/new", auth, (req, res) => {
   res.render("new_work", {
-    title: "Нова курсова работа"
+    title: "Предаване на нова курсова работа"
   });
 });
 

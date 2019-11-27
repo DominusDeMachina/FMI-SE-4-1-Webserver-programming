@@ -1,6 +1,9 @@
 {{>header}}
 <div class="container">
   <div class="row">
+    <h2>{{title}}</h2>
+  </div>
+  <div class="row">
     <div class="form-group col">
       <label for="name">Заглавие</label>
       <input type="text" id="name" class="form-control">
@@ -27,10 +30,26 @@
   document.querySelector("#sendWork").addEventListener("click", async function (event) {
     event.preventDefault();
     const url = "/api/works/new";
-    var formData = new FormData();
-    var fileField = document.querySelector("input[type='file']");
+    let formData = new FormData();
+    let fileField = document.querySelector("input[type='file']");
+    let nameField = document.querySelector("#name").value.trim();
+    if (!fileField.files[0]) {
+      alert('Трябва да сложи файла');
+      return;
+    }
+    if (!nameField.trim()) {
+      alert('Трябва да сложи заглавието');
+      return;
+    } else if (!nameField.match(/^(\w){5,100}$/)) {
+      alert('Дължина на заглавието трябва да бъде от 5 до 100 символи');
+      return;
+    } else if (!fileField.files[0].type !== "application/zip") {
+      alert('Трябва да сложи ZIP файл');
+      return;
+    }
 
-    formData.append('name', document.querySelector("#name").value);
+
+    formData.append('name', nameField);
     formData.append('file', fileField.files[0]);
 
     let response = await fetch(url, {

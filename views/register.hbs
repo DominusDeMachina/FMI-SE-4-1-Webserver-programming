@@ -42,7 +42,7 @@
       <div class="form-group col">
         <label for="passwordAgain">Парола отново</label>
         <input type="text" id="passwordAgain" class="form-control">
-        <small class="form-text text-danger"></small>
+        <small id="passwordAgainError" class="form-text text-danger"></small>
 
       </div>
     </div>
@@ -94,13 +94,47 @@
   });
   document.querySelector("#passwordAgain").addEventListener("input", function () {
     const password = document.querySelector("#password").value;
+    const passwordAgainError = document.querySelector("#passwordAgainError");
+
     if (this.value !== password) {
       this.classList.add("is-invalid");
+      passwordAgainError.innerHTML = "Трябва да има същата стойност като Парола";
+
     } else {
       this.classList.remove("is-invalid");
+      passwordAgainError.innerHTML = "";
+
     }
   })
   document.querySelector("#register").addEventListener("click", async function (event) {
+    function generateError(field) {
+      let localError = "";
+      switch (field) {
+        case "userName":
+          localError = "Задолжително между 1 и 100 символи"
+          break;
+        case "firstName":
+          localError = "Задолжително между 5 и 20 символи"
+          break;
+        case "lastName":
+          localError = "Задолжително между 1 и 20 символи"
+          break;
+        case "facNumber":
+          localError = "Задолжително 10 символи"
+          break;
+        case "password":
+          localError = "Задолжително между 6 и 30 символи, поне една малка буква, една голяма буква, една цифра и един символ от -,_,@,*"
+          break;
+        case "spec":
+          localError = "Задолжително между 1 и 100 символи"
+          break;
+        default:
+          localError = ""
+      }
+      return localError;
+    }
+
+
     event.preventDefault();
     const url = "/api/users/register";
     const courseElement = document.querySelector("#course");
@@ -113,6 +147,12 @@
     } else {
       passwordAgain.classList.remove("is-invalid");
     }
+
+    const inputs = document.querySelectorAll("input");
+    const errors = document.querySelectorAll("input+small");
+    console.log(inputs)
+    inputs.forEach(e => e.classList.remove("is-invalid"));
+    errors.forEach(e => e.innerHTML = "");
 
     const body = {
       userName: document.querySelector("#userName").value,
@@ -136,8 +176,10 @@
       const responseJson = await response.json();
       const errors = responseJson.errors;
       Object.keys(errors).forEach(e => {
-        const el = document.querySelector(`#${e}+small`);
-        el.innerHTML = errors[e].message;
+        const errorEl = document.querySelector(`#${e}+small`);
+        errorEl.innerHTML = generateError(e);
+        const el = document.querySelector(`#${e}`);
+        el.classList.add("is-invalid")
       })
     }
   });
