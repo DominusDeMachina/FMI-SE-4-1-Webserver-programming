@@ -4,12 +4,50 @@
   <div class="col">
     <h2>{{title}}</h2>
   </div>
-  <div id="logout" class="col"></div>
+  <div class="col"><a class="btn btn-success" href="/works/new">Добави нова</a></div>
+  <div class="col"><button id="logout" class="btn btn-secondary">Log out</button></div>
+</div>
+<div class="row">
+  <div class="col">
+    <table class="table">
+      <tr>
+        <th>Дата</th>
+        <th>Заглавие</th>
+        <th>Сваляне</th>
+      </tr>
+      {{#each works}}
+      <tr>
+        <td>{{dateFormat createdAt "DD.MM.YYYY" }}</td>
+        <td>{{name}}</td>
+        <td><a class="download" data-id="{{_id}}" href="">Download</a></td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
 </div>
 {{>footer}}
 
 <script>
-  window.addEventListener("load", function () {
+  document.querySelectorAll(".download").forEach(el => el.addEventListener("click", async function (event) {
+    event.preventDefault();
+    const id = event.target.getAttribute("data-id");
+    await fetch("/api/works/download/" + id, {
+      method: 'GET'
+    }).then(response => response.blob()).then(response => {
+      const url = URL.createObjectURL(response);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "work.zip"
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+  }));
 
+  document.querySelector("#logout").addEventListener("click", function (event) {
+    event.preventDefault();
+    document.cookie = "token=; Max-Age=-99999999;";
+    location.reload(true);
   })
+
 </script>

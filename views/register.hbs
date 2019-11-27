@@ -5,16 +5,22 @@
       <div class="form-group col">
         <label for="userName">Потребителско име</label>
         <input type="text" id="userName" class="form-control">
+        <small class="form-text text-danger"></small>
+
       </div>
       <div class="form-group col">
         <label for="facNumber">Факультетен номер</label>
         <input type="text" id="facNumber" class="form-control">
+        <small class="form-text text-danger"></small>
+
       </div>
     </div>
     <div class="row">
       <div class="form-group col">
         <label for="firstName">Име</label>
         <input type="text" id="firstName" class="form-control">
+        <small class="form-text text-danger"></small>
+
       </div>
       <div class="form-group col">
         <label for="middleName">Презиме</label>
@@ -23,22 +29,29 @@
       <div class="form-group col">
         <label for="lastName">Фамилия</label>
         <input type="text" id="lastName" class="form-control">
+        <small class="form-text text-danger"></small>
+
       </div>
     </div>
     <div class="row">
       <div class="form-group col">
         <label for="password">Парола</label>
         <input type="text" id="password" class="form-control">
+        <small class="form-text text-danger"></small>
       </div>
       <div class="form-group col">
         <label for="passwordAgain">Парола отново</label>
         <input type="text" id="passwordAgain" class="form-control">
+        <small class="form-text text-danger"></small>
+
       </div>
     </div>
     <div class="row">
       <div class="form-group col">
         <label for="spec">Специалност</label>
         <input type="text" id="spec" class="form-control">
+        <small class="form-text text-danger"></small>
+
       </div>
       <div class="form-group col">
         <label for="course">Курс</label>
@@ -79,10 +92,27 @@
     studyElement.innerHTML = study.map(s => `<option value=${s._id}>${s.name}</option>`)
 
   });
-  document.querySelector("#register").addEventListener("click", async function () {
+  document.querySelector("#passwordAgain").addEventListener("input", function () {
+    const password = document.querySelector("#password").value;
+    if (this.value !== password) {
+      this.classList.add("is-invalid");
+    } else {
+      this.classList.remove("is-invalid");
+    }
+  })
+  document.querySelector("#register").addEventListener("click", async function (event) {
+    event.preventDefault();
     const url = "/api/users/register";
     const courseElement = document.querySelector("#course");
     const studyElement = document.querySelector("#study");
+    const password = document.querySelector("#password").value;
+    const passwordAgain = document.querySelector("#passwordAgain");
+    if (passwordAgain.value !== password) {
+      passwordAgain.classList.add("is-invalid");
+      return;
+    } else {
+      passwordAgain.classList.remove("is-invalid");
+    }
 
     const body = {
       userName: document.querySelector("#userName").value,
@@ -90,7 +120,7 @@
       firstName: document.querySelector("#firstName").value,
       middleName: document.querySelector("#middleName").value,
       lastName: document.querySelector("#lastName").value,
-      password: document.querySelector("#password").value,
+      password: password,
       spec: document.querySelector("#spec").value,
       study: studyElement.options[studyElement.selectedIndex].value,
       course: courseElement.options[courseElement.selectedIndex].value
@@ -102,10 +132,14 @@
         'Content-Type': 'application/json'
       }
     });
-    if (response.status !== 200) {
-      alert(response.statusText);
+    if (!response.ok) {
+      const responseJson = await response.json();
+      const errors = responseJson.errors;
+      Object.keys(errors).forEach(e => {
+        const el = document.querySelector(`#${e}+small`);
+        el.innerHTML = errors[e].message;
+      })
     }
-    console.log(response);
   });
 
 </script>

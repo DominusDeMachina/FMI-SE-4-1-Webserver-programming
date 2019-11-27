@@ -18,6 +18,7 @@ const publicPath = path.join(__dirname, "../public");
 
 app.set("view engine", "hbs");
 hbs.registerPartials(partialPath);
+hbs.registerHelper('dateFormat', require('handlebars-dateformat'));
 
 app.use(express.static(publicPath));
 
@@ -30,7 +31,9 @@ app.use(studyRouter);
 app.use(courseRouter);
 
 app.use(function(req, res, next) {
-  res.redirect("/")
+  res.render("404", {
+    title: "Not found"
+  });
 });
 
 app.listen(port, () => {
